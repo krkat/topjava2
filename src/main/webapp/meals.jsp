@@ -1,7 +1,5 @@
-<%@ page import="java.util.List" %>
-<%@ page import="ru.javawebinar.topjava.model.MealTo" %>
-<%@ page import="java.time.LocalTime" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html lang="ru">
 <head>
     <title>Meals</title>
@@ -19,18 +17,22 @@
     </tr>
     </thead>
     <tbody>
-    <% for (MealTo to : (List<MealTo>) request.getAttribute("tos")) {
-        if (to.isExcess()) {%>
-    <tr style="color: red; font-weight: bold">
-            <%} else {%>
-    <tr style="color: green; font-weight: bold">
-        <%}%>
-        <td><%=to.getDateTime()%></td>
-        <td><%=to.getDescription()%></td>
-        <td><%=to.getCalories()%></td>
-    </tr>
+    <jsp:useBean id="meal" class="ru.javawebinar.topjava.model.MealTo" scope="request"/>
+    <c:forEach items="${requestScope.tos}" var="meal">
+        <c:choose>
+            <c:when test="${meal.excess==true}">
+                <tr style="color: red; font-weight: bold">
+            </c:when>
+            <c:otherwise>
+                <tr style="color: green; font-weight: bold">
+            </c:otherwise>
+        </c:choose>
+        <td>${meal.dateTime}</td>
+        <td>${meal.description}</td>
+        <td>${meal.calories}</td>
+        </tr>
+    </c:forEach>
     </tbody>
-    <%}%>
 </table>
 </body>
 </html>
