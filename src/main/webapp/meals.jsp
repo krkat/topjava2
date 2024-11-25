@@ -10,12 +10,14 @@
 <h3><a href="index.html">Home</a></h3>
 <hr>
 <h2>Meals</h2>
-<table>
+<h4><a href="meals?action=insert">Create Meal</a></h4>
+<table border="2px" style="font-size: 20px" align="center">
     <thead>
     <tr>
-        <th>Дата/Время</th>
-        <th>Описание</th>
-        <th>Калории</th>
+        <th>Date/Time</th>
+        <th>Description</th>
+        <th>Calories</th>
+        <th colspan="2">Action</th>
     </tr>
     </thead>
     <tbody>
@@ -29,11 +31,17 @@
                 <tr style="color: green; font-weight: bold">
             </c:otherwise>
         </c:choose>
+        <td><c:out value="${meal.dateTime.format( DateTimeFormatter.ofPattern(\"dd.MM.yyyy HH:mm\"))}"/></td>
+        <td><c:out value="${meal.description}"/></td>
+        <td><c:out value="${meal.calories}"/></td>
+        <td><a href="meals?action=update&mealId=${meal.id}">Update</a></td>
         <td>
-        ${meal.dateTime.format( DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"))}
+            <form style=" margin: 3px; padding: 3px;" action="meals" method="post" onsubmit="return confirm('Are you sure you want to delete this meal?');">
+                <input type="hidden" name="action" value="delete">
+                <input type="hidden" name="mealId" value="${meal.id}">
+                <input type="submit" value="Delete">
+            </form>
         </td>
-        <td>${meal.description}</td>
-        <td>${meal.calories}</td>
         </tr>
     </c:forEach>
     </tbody>
