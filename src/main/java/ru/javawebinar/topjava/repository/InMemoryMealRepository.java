@@ -1,41 +1,43 @@
 package ru.javawebinar.topjava.repository;
 
 import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.util.MealsUtil;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class InMemoryMealRepository implements MealRepository{
+    private static Map<Integer, Meal> repository = new ConcurrentHashMap<>();
 
-    private Map<Integer, Meal> repository = new HashMap<>();
+    private final AtomicInteger counter = new AtomicInteger(0);
+
+    {
+        MealsUtil.meals.forEach(this::save);
+    }
 
     @Override
-    public Meal findById(int id) {
+    public Meal get(int id) {
         return repository.get(id);
     }
 
     @Override
-    public List<Meal> findAll() {
-        List<Meal> meals = new ArrayList<>();
-        meals.addAll(repository.values());
-        return meals;
+    public Collection<Meal> getAll() {
+        return repository.values();
     }
 
     @Override
-    public void add(Meal meal) {
-        meal.setId();
-        repository.put(meal.getId(), meal);
+    public Meal save(Meal meal) {
+        if (meal.isNew()) {
+            meal.setId(counter.incrementAndGet());
+            repository.put(meal.getId(), meal);
+            return meal;
+        }
+        return repository.computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
     }
 
     @Override
-    public void update(int mealId, Meal meal) {
-        repository.put(mealId, meal);
-    }
-
-    @Override
-    public void delete(int id) {
-        repository.remove(id);
+    public boolean delete(int id) {
+        return repository.remove(id) != null;
     }
 }

@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.util.Collection;
 import java.util.List;
 
 import static org.slf4j.LoggerFactory.getLogger;
@@ -41,7 +41,7 @@ public class MealServlet extends HttpServlet {
         if (action.equalsIgnoreCase("update")) {
             forward = UPDATE;
             int mealId = Integer.parseInt(request.getParameter("mealId"));
-            Meal meal = mealRepository.findById(mealId);
+            Meal meal = mealRepository.get(mealId);
             request.setAttribute("meal", meal);
             log.info("Updating form for meal with id {}", meal.getId());
         } else if (action.equalsIgnoreCase("insert")) {
@@ -50,8 +50,8 @@ public class MealServlet extends HttpServlet {
             log.info("Getting add meal form");
         } else {
             forward = MEALS;
-            List<Meal> meals = mealRepository.findAll();
-            List<MealTo> tos = MealsUtil.getTos(meals, MealsUtil.DEFAULT_CALORIES_PER_DAY);
+            Collection<Meal> meals = mealRepository.getAll();
+            Collection<MealTo> tos = MealsUtil.getTos(meals, MealsUtil.DEFAULT_CALORIES_PER_DAY);
             request.setAttribute("tos", tos);
             log.info("Getting meals list");
         }
@@ -74,12 +74,12 @@ public class MealServlet extends HttpServlet {
             Meal meal;
             if (action.equalsIgnoreCase("insert")) {
                 meal = new Meal(localDateTime, description, calories);
-                mealRepository.add(meal);
+                mealRepository.save(meal);
                 log.info("Added meal: {}", meal.getDescription());
             } else if (action.equalsIgnoreCase("update")) {
                 int mealId = Integer.parseInt(request.getParameter("mealId"));
                 Meal updatedMeal = new Meal(mealId, localDateTime, description, calories);
-                mealRepository.update(mealId, updatedMeal);
+                mealRepository.save(updatedMeal);
                 log.info("Updated meal with Id {}", updatedMeal.getId());
             }
         }
