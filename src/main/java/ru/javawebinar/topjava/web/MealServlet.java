@@ -51,7 +51,7 @@ public class MealServlet extends HttpServlet {
         } else {
             forward = MEALS;
             List<Meal> meals = mealRepository.findAll();
-            List<MealTo> tos = MealsUtil.filteredByStreams(meals, LocalTime.MIN, LocalTime.MAX, MealsUtil.CALORIES_PER_DAY);
+            List<MealTo> tos = MealsUtil.getTos(meals, MealsUtil.DEFAULT_CALORIES_PER_DAY);
             request.setAttribute("tos", tos);
             log.info("Getting meals list");
         }

@@ -2,9 +2,20 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://topjava.javawebinar.ru/functions" %>
 <html lang="ru">
 <head>
     <title>Meals</title>
+    <style>
+        .normal {
+            color: green;
+            font-weight: bold;
+        }
+        .excess {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
 <h3><a href="index.html">Home</a></h3>
@@ -23,14 +34,7 @@
     <tbody>
     <jsp:useBean id="meal" class="ru.javawebinar.topjava.model.MealTo" scope="request"/>
     <c:forEach items="${requestScope.tos}" var="meal">
-        <c:choose>
-            <c:when test="${meal.excess==true}">
-                <tr style="color: red; font-weight: bold">
-            </c:when>
-            <c:otherwise>
-                <tr style="color: green; font-weight: bold">
-            </c:otherwise>
-        </c:choose>
+        <tr class="${meal.excess ? 'excess' : 'normal'}">
         <td><c:out value="${meal.dateTime.format( DateTimeFormatter.ofPattern(\"dd.MM.yyyy HH:mm\"))}"/></td>
         <td><c:out value="${meal.description}"/></td>
         <td><c:out value="${meal.calories}"/></td>
