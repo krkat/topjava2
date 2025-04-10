@@ -35,4 +35,10 @@ public class MealTestData {
     public static Meal getUpdated() {
         return new Meal(MEAL1_ID, meal1.getDateTime().plus(2, ChronoUnit.MINUTES), "Обновленный завтрак", 200);
     }
+
+    public static Meal getWithUser() {
+        Meal withUser = new Meal(ADMIN_MEAL_ID, of(2020, Month.JANUARY, 31, 14, 0), "Админ ланч", 510);
+        withUser.setUser(UserTestData.admin);
+        return withUser;
+    }
 }
