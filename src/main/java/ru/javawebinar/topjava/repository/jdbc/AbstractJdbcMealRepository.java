@@ -36,7 +36,13 @@ public abstract class AbstractJdbcMealRepository implements MealRepository {
 
     @Override
     public Meal save(Meal meal, int userId) {
-        MapSqlParameterSource map = getMap(meal, userId);
+        MapSqlParameterSource map =
+                new MapSqlParameterSource()
+                        .addValue("id", meal.getId())
+                        .addValue("description", meal.getDescription())
+                        .addValue("calories", meal.getCalories())
+                        .addValue("user_id", userId);
+        map = setDateTime(map, meal.getDateTime());
         if (meal.isNew()) {
             Number newId = insertMeal.executeAndReturnKey(map);
             meal.setId(newId.intValue());
@@ -74,7 +80,7 @@ public abstract class AbstractJdbcMealRepository implements MealRepository {
         return getBetweenHalfOpenForDb(startDateTime, endDateTime, userId);
     }
 
-    protected abstract MapSqlParameterSource getMap(Meal meal, int userId);
+    protected abstract MapSqlParameterSource setDateTime(MapSqlParameterSource map, LocalDateTime ldt);
 
     protected abstract List<Meal> getBetweenHalfOpenForDb(LocalDateTime startDateTime, LocalDateTime endDateTime, int userId);
 }
