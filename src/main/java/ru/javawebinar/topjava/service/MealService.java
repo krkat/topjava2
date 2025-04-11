@@ -4,7 +4,6 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.MealRepository;
 
 import java.time.LocalDate;
@@ -50,6 +49,6 @@ public class MealService {
     }
 
     public Meal getWithUser(int id, int userId) {
-        return repository.getWithUser(id, userId);
+        return checkNotFound(repository.getWithUser(id, userId), id);
     }
 }
