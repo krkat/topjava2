@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
@@ -38,13 +39,15 @@ public class JdbcUserRepository implements UserRepository {
                 user.setName(rs.getString("name"));
                 user.setEmail(rs.getString("email"));
                 user.setPassword(rs.getString("password"));
+                user.setCaloriesPerDay(rs.getInt("calories_per_day"));
+                user.setEnabled(rs.getBoolean("enabled"));
             }
             String role = rs.getString("role");
             if (role != null) {
                 user.addRole(Role.valueOf(role));
             }
         }
-        return user;
+        return user.isNew() ? null : user;
     };
 
     @Autowired
@@ -71,7 +74,9 @@ public class JdbcUserRepository implements UserRepository {
                 """, parameterSource) == 0) {
             return null;
         }
-        if (user.getRoles() != null) {
+        jdbcTemplate.update("DELETE FROM user_role WHERE user_id=?", user.getId());
+
+        if (!CollectionUtils.isEmpty(user.getRoles())) {
             List<Role> roles = new ArrayList<>(user.getRoles());
             jdbcTemplate.batchUpdate("INSERT INTO user_role (user_id, role) VALUES (?, ?)",
                     new BatchPreparedStatementSetter() {
@@ -99,12 +104,12 @@ public class JdbcUserRepository implements UserRepository {
 
     @Override
     public User get(int id) {
-        return jdbcTemplate.query("SELECT * FROM users LEFT JOIN user_role ur on users.id = ur.user_id WHERE id=?", extractor);
+        return jdbcTemplate.query("SELECT * FROM users LEFT JOIN user_role ur on users.id = ur.user_id WHERE id=?", extractor, id);
     }
 
     @Override
     public User getByEmail(String email) {
-        return jdbcTemplate.query("SELECT * FROM users LEFT JOIN user_role ur on users.id = ur.user_id WHERE email=?", extractor);
+        return jdbcTemplate.query("SELECT * FROM users LEFT JOIN user_role ur on users.id = ur.user_id WHERE email=?",  extractor, email);
     }
 
     @Override
@@ -123,6 +128,8 @@ public class JdbcUserRepository implements UserRepository {
                             user.setName(rs.getString("name"));
                             user.setEmail(rs.getString("email"));
                             user.setPassword(rs.getString("password"));
+                            user.setCaloriesPerDay(rs.getInt("calories_per_day"));
+                            user.setEnabled(rs.getBoolean("enabled"));
                             user.setRoles(new HashSet<>());
                             users.put(id, user);
                         }

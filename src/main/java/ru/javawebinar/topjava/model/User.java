@@ -138,7 +138,7 @@ public class User extends AbstractNamedEntity {
     }
 
     public void addRole(Role role) {
-        if (roles == null) {
+        if (CollectionUtils.isEmpty(roles)) {
             roles = new HashSet<>();
         }
         roles.add(role);
