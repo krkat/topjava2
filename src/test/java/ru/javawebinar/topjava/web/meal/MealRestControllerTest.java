@@ -14,6 +14,7 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
 import ru.javawebinar.topjava.web.json.JsonUtil;
 
+import java.time.LocalTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -84,10 +85,47 @@ class MealRestControllerTest extends AbstractControllerTest {
     @Test
     void getBetween() throws Exception {
         MatcherFactory.Matcher<MealTo> matcher = MatcherFactory.usingIgnoringFieldsComparator(MealTo.class);
-        perform(MockMvcRequestBuilders.get(REST_URL + "filter?start="
-                + "2020-01-30T10:00:00" + "&end=" + "2020-01-30T19:00:00"))
+        perform(MockMvcRequestBuilders.get(REST_URL +
+                "filter?startDate=" + "2020-01-30" +
+                "&startTime=" + "10:00:00" +
+                "&endDate=" + "2020-01-30" +
+                "&endTime=" + "19:00:00"
+        ))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(matcher.contentJson(MealsUtil.getTos(List.of(meal2, meal1), user.getCaloriesPerDay())));
+    }
+
+    @Test
+    void getBetweenDates() throws Exception {
+        MatcherFactory.Matcher<MealTo> matcher = MatcherFactory.usingIgnoringFieldsComparator(MealTo.class);
+        perform(MockMvcRequestBuilders.get(REST_URL +
+                "filter?startDate=" + "2020-01-30" +
+                "&startTime=" +
+                "&endDate=" + "2020-01-30" +
+                "&endTime="
+        ))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(matcher.contentJson(MealsUtil.getTos(List.of(meal3, meal2, meal1), user.getCaloriesPerDay())));
+    }
+
+    @Test
+    void getBetweenTimes() throws Exception {
+        MatcherFactory.Matcher<MealTo> matcher = MatcherFactory.usingIgnoringFieldsComparator(MealTo.class);
+        perform(MockMvcRequestBuilders.get(REST_URL +
+                "filter?startDate=" +
+                "&startTime=" + "10:00:00" +
+                "&endDate=" +
+                "&endTime=" + "19:00:00"
+        ))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(matcher.contentJson(
+                        MealsUtil.getFilteredTos(
+                                meals,
+                                user.getCaloriesPerDay(),
+                                LocalTime.parse("10:00:00"),
+                                LocalTime.parse("19:00:00"))));
     }
 }

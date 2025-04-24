@@ -1,0 +1,27 @@
+package ru.javawebinar.topjava.util.converter;
+
+import org.springframework.core.convert.converter.Converter;
+
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+
+public class StringToLocalTimeConverter implements Converter<String, LocalTime> {
+    private String timePattern = "HH:mm:ss";
+
+    public String getTimePattern() {
+        return timePattern;
+    }
+
+    public void setTimePattern(String timePattern) {
+        this.timePattern = timePattern;
+    }
+
+    @Override
+    public LocalTime convert(String timeString) {
+        if (timeString != null && !timeString.isEmpty()) {
+            return LocalTime.parse(timeString, DateTimeFormatter.ofPattern(timePattern));
+        }
+        return null;
+    }
+}
+
