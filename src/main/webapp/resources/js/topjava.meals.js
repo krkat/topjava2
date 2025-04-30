@@ -41,13 +41,22 @@ $(function () {
 });
 
 function filter() {
-    /*$.get(ctx.ajaxUrl + "filter", function (data) {
-        ctx.datatableApi.clear().rows.add(data).draw();
-    });*/
     $.ajax({
         type: "GET",
         url: ctx.ajaxUrl + "filter",
         data: $('#filterForm').serialize(),
+        success: function (data) {
+            ctx.datatableApi.clear().rows.add(data).draw();
+            successNoty("Filtered");
+        }
+    });
+}
+
+function clearFilter() {
+    $('#filterForm').find(":input").val("");
+    $.ajax({
+        type: "GET",
+        url: ctx.ajaxUrl,
         success: function (data) {
             ctx.datatableApi.clear().rows.add(data).draw();
             successNoty("Filtered");
