@@ -19,7 +19,7 @@ import static ru.javawebinar.topjava.web.meal.MealUIController.REST_URL;
 @RequestMapping(value = REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 public class MealUIController extends AbstractMealController {
 
-    static final String REST_URL = "/meals";
+    static final String REST_URL = "/profile/meals";
 
     @Override
     @GetMapping
@@ -50,7 +50,7 @@ public class MealUIController extends AbstractMealController {
     }
 
     @Override
-    @GetMapping("/filter")
+    @GetMapping(value = "/filter")
     public List<MealTo> getBetween(
             @RequestParam @Nullable LocalDate startDate,
             @RequestParam @Nullable LocalTime startTime,
