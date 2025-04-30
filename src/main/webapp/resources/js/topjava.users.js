@@ -45,3 +45,19 @@ $(function () {
         })
     );
 });
+
+function enable(elem, id) {
+    alert('yes');
+    const enabled = elem.is(":checked");
+    $.ajax({
+        url: ctx.ajaxUrl + id,
+        type: "POST",
+        data: 'enabled=' + enabled
+    }).done(function () {
+        elem.closest('tr').attr('user-enabled', enabled);
+        updateTable();
+        successNoty( enabled ? "Enabled" : "Disabled");
+    }).fail(function () {
+        $(elem).prop('checked', !enabled);
+    });
+}
