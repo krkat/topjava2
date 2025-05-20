@@ -26,5 +26,7 @@
                 </button>
             </form:form>
         </sec:authorize>
+        <a href='${pageContext.request.contextPath}?locale=en'>English</a>
+        <a href='${pageContext.request.contextPath}?locale=ru'>Русский</a>
     </div>
 </nav>
